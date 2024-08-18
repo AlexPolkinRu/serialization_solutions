@@ -18,7 +18,7 @@ Requirements:
 8. Класс C не должен явно поддерживать интерфейс Serializable.*/
 
 public class Solution {
-    public class A {
+    public class A implements Serializable{
         String name = "A";
 
         public A(String name) {
@@ -50,6 +50,8 @@ public class Solution {
     }
 
     public static void main(String[] args) {
-
+        Solution solution = new Solution();
+        C c = solution.new C("Name");
+        System.out.println(c instanceof Serializable);
     }
 }

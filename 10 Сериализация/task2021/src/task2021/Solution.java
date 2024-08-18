@@ -18,8 +18,15 @@ Requirements:
 public class Solution implements Serializable {
     public static class SubSolution extends Solution {
     }
-
     public static void main(String[] args) {
-
     }
+
+    public Object readObject() throws ClassNotFoundException, IOException {
+        throw new NotSerializableException("Сериализация запрещена!");
+    }
+
+    public void writeObject(Object obj) throws IOException {
+        throw new NotSerializableException("Сериализация запрещена!");
+    }
+
 }

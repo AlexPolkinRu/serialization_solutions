@@ -7,7 +7,10 @@ import java.util.List;
 
 /* 
 Читаем и пишем в файл: Human
-Часто необходимо сохранять состояние работы программы. До появления сериализации каждый делал это своим способом. В этой задаче нужно сохранить в файл
+
+Часто необходимо сохранять состояние работы программы.
+До появления сериализации каждый делал это своим способом.
+В этой задаче нужно сохранить в файл
 состояние работы программы и вычитать состояние из файла без использования сериализации.
 
 Реализуй логику записи в файл и чтения из файла для класса Human.
@@ -16,29 +19,48 @@ import java.util.List;
 
 
 Requirements:
-1. Логика чтения/записи реализованная в методах save/load должна работать корректно в случае, если список assets пустой.
-2. Логика чтения/записи реализованная в методах save/load должна работать корректно в случае, если поле name и список assets не пустые.
+1. Логика чтения/записи реализованная в методах save/load должна работать корректно в случае,
+    если список assets пустой.
+2. Логика чтения/записи реализованная в методах save/load должна работать корректно в случае,
+    если поле name и список assets не пустые.
 3. Класс Solution.Human не должен поддерживать интерфейс Serializable.
 4. Класс Solution.Human должен быть публичным.
-5. Класс Solution.Human не должен поддерживать интерфейс Externalizable.*/
+5. Класс Solution.Human не должен поддерживать интерфейс Externalizable.
+
+*/
 
 public class Solution {
     public static void main(String[] args) {
         //исправьте outputStream/inputStream в соответствии с путем к вашему реальному файлу
         try {
-            File your_file_name = File.createTempFile("your_file_name", null);
+            File your_file_name = File.createTempFile("d:\\ivanov.ser", null);
             OutputStream outputStream = new FileOutputStream(your_file_name);
             InputStream inputStream = new FileInputStream(your_file_name);
 
-            Human ivanov = new Human("Ivanov", new Asset("home", 999_999.99), new Asset("car", 2999.99));
+            Human ivanov = new Human(
+                    "Ivanov",
+                    new Asset("home", 999_999.99),
+                    new Asset("car", 2999.99)
+            );
+
             ivanov.save(outputStream);
             outputStream.flush();
 
             Human somePerson = new Human();
             somePerson.load(inputStream);
             inputStream.close();
-            //check here that ivanov equals to somePerson - проверьте тут, что ivanov и somePerson равны
 
+            //check here that ivanov equals to somePerson - проверьте тут, что ivanov и somePerson равны
+//            System.out.println(ivanov);
+//            System.out.println(somePerson);
+//            System.out.println(somePerson.name);
+//            for (Asset a : somePerson.assets) {
+//                System.out.println(a.getName());
+//                System.out.println(a.getPrice());
+//            }
+
+            System.out.print("Сравниваем объекты ivanov и somePerson: ");
+            System.out.println(ivanov.equals(somePerson));
         } catch (IOException e) {
             //e.printStackTrace();
             System.out.println("Oops, something wrong with my file");
@@ -82,10 +104,25 @@ public class Solution {
 
         public void save(OutputStream outputStream) throws Exception {
             //implement this method - реализуйте этот метод
+            try (PrintWriter writer = new PrintWriter(outputStream)) {
+                writer.println(name);
+                if (!assets.isEmpty()) {
+                    for (Asset asset : assets) {
+                        writer.println(asset.getName() + ";" + asset.getPrice());
+                    }
+                }
+            }
         }
 
         public void load(InputStream inputStream) throws Exception {
             //implement this method - реализуйте этот метод
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                name = reader.readLine();
+                while (reader.ready()) {
+                    String[] elements = reader.readLine().split(";");
+                        assets.add(new Asset(elements[0], Double.parseDouble(elements[1])));
+                }
+            }
         }
     }
 }
